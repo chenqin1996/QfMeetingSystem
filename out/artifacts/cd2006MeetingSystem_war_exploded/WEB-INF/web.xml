@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1"
+         metadata-complete="true">
+  <display-name>Archetype Created Web Application</display-name>
+
+  <context-param>
+    <param-name>config</param-name>
+    <param-value>com.qianfeng.meeting.business.config.AppConfig</param-value>
+  </context-param>
+  
+
+
+  <servlet>
+    <servlet-name>DispatcherServlet</servlet-name>
+    <servlet-class>com.qianfeng.meeting.framework.servlet.DispatcherServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DispatcherServlet</servlet-name>
+<!--    其他的servlet都不能匹配的路径就默认由/来匹配-->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  <!-- 处理静态资源 -->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.html</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.css</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.js</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.jpg</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.jpeg</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.png</url-pattern>
+  </servlet-mapping>
+
+
+<!--  注册监听器-->
+  <listener>
+    <listener-class>com.qianfeng.meeting.framework.listener.AppListener</listener-class>
+  </listener>
+
+
+<!--  注册身份验证过滤器-->
+  <filter>
+    <filter-name>AuthticationFilter</filter-name>
+    <filter-class>com.qianfeng.meeting.business.filter.AuthticationFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>AuthticationFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+</web-app>
+

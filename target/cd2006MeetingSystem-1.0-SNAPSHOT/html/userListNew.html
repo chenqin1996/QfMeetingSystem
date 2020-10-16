@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="css/pintuer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/pintuer.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+</head>
+<body>
+<form method="post" action="" id="listform">
+    <div class="panel admin-panel">
+        <div class="panel-head"><strong class="icon-reorder">用户列表</strong></div>
+        <table id="userList" class="table table-hover text-center">
+            <tr>
+                <th>用户ID</th>
+                <th>登录账户</th>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>电话</th>
+                <th>职位</th>
+                <th>代表团</th>
+                <th>操作</th>
+            </tr>
+        </table>
+        <center>
+            <input type="button" id="firstBtn" name="firstBtn" value="首页">
+            <input type="button" id="upBtn" name="upBtn" value="上一页">
+            <input type="button" id="nextBtn" name="nextBtn" value="下一页">
+            <input type="button" id="lastBtn" name="lastBtn" value="尾页">
+        </center>
+    </div>
+</form>
+<script>
+
+    var allNumber ;//用户所有数据
+    var page = 0;//当前页数
+    var countPage;//总共的页数
+    var dataNumber = 3;//每页的数据量
+    var remainder;//最后一页的余数
+
+    /*
+        删除指定id的用户
+     */
+    function deleteUser(userId){
+        $.post(
+            "/addUsers/deleteUserVo",
+            "userId="+userId,
+            function (resp) {
+                if(resp.code == 0){
+                    location.reload();
+                }else{
+                    alert(resp.msg)
+                }
+            },
+            "json"
+        )
+    }
+
+    /*
+    查找userVo
+     */
+    function findUser(userId) {
+        var data = {"uid":userId};
+        $.ajax({
+            "url":"/addUsers/checkUserStaffByuId",
+            "type":"post",
+            "data":JSON.stringify(data),
+            "dataType":"json",
+            "contentType":"application/json; charset=utf-8",
+            "success":function (resp){
+                if (resp.code == 0){
+                    location.href="/html/updateUser.html"
+                }else {
+                    alert(resp.msg)
+                }
+            }
+        })
+    }
+
+    function appendData(userVoList) {
+        //$.each(被遍历的对象，变量的函数)
+        for (let i = 0; i < page*3+dataNumber; i++) {
+            var data = "<tr>"+
+                "<td>"+userVoList[i].uid+"</td>"+
+                "<td>"+userVoList[i].userName+"</td>"+
+                "<td>"+userVoList[i].userRealName+"</td>"+
+                "<td>"+(userVoList[i].gender<1?'男':(userVoList[i].gender<2?'女':'其他'))+ "</td>" +
+                "<td>"+userVoList[i].telPhone+"</td>"+
+                "<td>"+userVoList[i].staffName+"</td>"+
+                "<td>"+userVoList[i].delegationName+"</td>"+
+                "<td>"+
+                "<div>" +
+                "<a class=\"button border-main\" href=\"javascript:findUser("+userVoList[i].uid+")\" style=\"padding: 2px 8px;\" id='editUserInfo'><span\n" +
+                "                                class=\"icon-edit\"></span> 修改</a>" +
+                "<a class=\"button border-red\" href=\"javascript:deleteUser("+userVoList[i].uid+")\" style=\"padding: 2px 8px;\"\n" +
+                "                        ><span class=\"icon-trash-o\"></span> 删除</a>" +
+                "</div>" +
+                "</td>"+
+                "</tr>"
+            //将数据添加到table中
+            $("#userList").append(data);
+        }
+//        $.each(userVoList, function (index, uservo) {
+//        })
+    }
+
+    $(function (){
+        //1.请求服务器获取所有的用户
+        $.ajax({
+            "url":"/addUsers/checkUserStaff",
+            "type":"post",
+            "dataType":"json",
+            "contentType":"application/json; charset=utf-8",
+            "success":function (resp){
+                if(resp.code == 0) {
+                    var userVoList=resp.t;
+                    appendData(userVoList)
+
+                    allNumber = resp.t;
+                    countPage = parseInt((resp.t.length)%dataNumber==0 ? (resp.t.length)/dataNumber:(resp.t.length)/dataNumber+1);
+                    remainder = resp.t.length%dataNumber;
+                }else{
+                    alert(resp.msg)
+                }
+            }
+        })
+    });
+
+    function addApp(allNumber,i){
+        var data = "<tr>"+
+            "<td>"+allNumber[i].uid+"</td>"+
+            "<td>"+allNumber[i].userName+"</td>"+
+            "<td>"+allNumber[i].userRealName+"</td>"+
+            "<td>"+(allNumber[i].gender<1?'男':(allNumber[i].gender<2?'女':'其他'))+ "</td>" +
+            "<td>"+allNumber[i].telPhone+"</td>"+
+            "<td>"+allNumber[i].staffName+"</td>"+
+            "<td>"+allNumber[i].delegationName+"</td>"+
+            "<td>"+
+            "<div>" +
+            "<a class=\"button border-main\" href=\"javascript:findUser("+allNumber[i].uid+")\" style=\"padding: 2px 8px;\" id='editUserInfo'><span\n" +
+            "                                class=\"icon-edit\"></span> 修改</a>" +
+            "<a class=\"button border-red\" href=\"javascript:deleteUser("+allNumber[i].uid+")\" style=\"padding: 2px 8px;\"\n" +
+            "                        ><span class=\"icon-trash-o\"></span> 删除</a>" +
+            "</div>" +
+            "</td>"+
+            "</tr>"
+        //将数据添加到table中
+        $("#userList").append(data);
+    }
+
+
+    function addHead(){
+        let app = "<tr>" +
+            "<th>用户ID</th>" +
+            "<th>登录账户</th>" +
+            "<th>姓名</th>" +
+            "<th>性别</th>" +
+            "<th>电话</th>" +
+            "<th>职位</th>" +
+            "<th>代表团</th>" +
+            "<th>操作</th>" +
+            "</tr>"
+        $("#userList").append(app)
+    }
+
+    $("#firstBtn").click(function (){
+        $("#userList").empty();
+        addHead();
+        for (let i = 0; i < dataNumber; i++) {
+            addApp(allNumber,i);
+            page = 0;
+        }
+    })
+
+    $("#upBtn").click(function (){
+        page--;
+        if (page<0){
+            page++;
+            alert("已经是第一页啦")
+        }else {
+            $("#userList").empty();
+            addHead();
+            for (let i = page*dataNumber; i < page*dataNumber+dataNumber; i++) {
+                addApp(allNumber,i);
+            }
+        }
+
+    })
+
+    $("#nextBtn").click(function (){
+        page++;
+        if (page>countPage-1){
+            page--;
+            alert("已经是最后一页啦")
+        }else {
+            if (page == countPage-1 && remainder != 0){
+                $("#userList").empty();
+                addHead();
+                for (let i = page*dataNumber; i < page*dataNumber+remainder; i++) {
+                    addApp(allNumber,i);
+                }
+            }else {
+                $("#userList").empty();
+                addHead();
+                for (let i = page*dataNumber; i < page*dataNumber+dataNumber; i++) {
+                    addApp(allNumber,i);
+                }
+            }
+        }
+
+    })
+
+    $("#lastBtn").click(function (){
+        $("#userList").empty();
+        addHead();
+        if (remainder != 0){
+            for (let i = (countPage-1)*dataNumber; i < (countPage-1)*dataNumber+remainder; i++) {
+                addApp(allNumber,i);
+            }
+        }else {
+            for (let i = (countPage-1)*dataNumber; i < (countPage-1)*dataNumber+dataNumber; i++) {
+                addApp(allNumber,i);
+            }
+        }
+        page = countPage-1;
+    })
+</script>
+
+</body>
+</html>

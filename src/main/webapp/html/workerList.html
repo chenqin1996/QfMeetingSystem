@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="css/pintuer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/pintuer.js"></script>
+</head>
+<body>
+<form method="post" action="" id="listform">
+    <div class="panel admin-panel">
+        <div class="panel-head"><strong class="icon-reorder">会议秘书列表</strong></div>
+        <table id="workerList" class="table table-hover text-center">
+            <tr>
+                <th>秘书编号</th>
+                <th>秘书姓名</th>
+                <th>秘书性别</th>
+                <th>秘书电话</th>
+                <th>所在部门</th>
+                <th>操作</th>
+            </tr>
+        </table>
+    </div>
+</form>
+<script>
+    function getDept(deptId){
+        var dept;
+        if(deptId==1){
+            dept = "销售部";
+        }else if(deptId==2){
+            dept = "公关部";
+        }else if(deptId==3){
+            dept = "技术部";
+        }else if(deptId==4){
+            dept = "行政部";
+        }
+        return dept;
+    }
+
+    /*
+        删除指定id的权限
+     */
+    function deleteWorker(workerId){
+        $.post(
+            "/workers/deleteWorker",
+            "workerId="+workerId,
+            function (resp) {
+                if(resp.code == 0){
+                    location.reload();
+                }else{
+                    alert(resp.msg)
+                }
+            },
+            "json"
+        )
+    }
+
+    function appendData(workerList) {
+        //$.each(被遍历的对象，变量的函数)
+        $.each(workerList, function (index, worker) {
+            var data = "<tr>"+
+                "<td>"+worker.workerId+"</td>"+
+                "<td>"+worker.workerName+"</td>"+
+                "<td>"+(worker.gender=1?'男':(worker.gender=0?'女':'其他'))+ "</td>" +
+                "<td>"+worker.telNum+"</td>"+
+                "<td>"+getDept(worker.deptId)+"</td>"+
+
+                "<td>"+
+                "<div>" +
+                "<a class=\"button border-main\" href=\"editorProject.html\" style=\"padding: 2px 8px;\"><span\n" +
+                "                                class=\"icon-edit\"></span> 修改</a>" +
+                "<a class=\"button border-red\" href=\"javascript:deleteWorker("+worker.workerId+")\" style=\"padding: 2px 8px;\"\n" +
+                "                        ><span class=\"icon-trash-o\"></span> 删除</a>" +
+                "</div>" +
+                "</td>"+
+                "</tr>"
+            //将数据添加到table中
+            $("#workerList").append(data);
+        })
+    }
+
+    $(function (){
+        //1.请求服务器获取所有的角色
+        $.get(
+            "/workers/findAllWorkers",
+            function (resp){
+                //2.取出所有角色，并动态的添加到此html中
+                var workerList = resp.t;//取出服务器响应的roleList对象
+                appendData(workerList);//动态的将集合中的每一个权限都添加到html中
+            },
+            "json"
+        );
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="css/pintuer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/pintuer.js"></script>
+</head>
+<body>
+<form method="post" action="" id="listform">
+    <div class="panel admin-panel">
+        <div class="panel-head"><strong class="icon-reorder">代表团列表</strong></div>
+        <table id="delegationList" class="table table-hover text-center">
+            <tr>
+                <th>代表团编号</th>
+                <th>代表团名称</th>
+                <th>代表团简介</th>
+                <th>代表团成员</th>
+                <th>操作</th>
+            </tr>
+        </table>
+    </div>
+</form>
+<script>
+    /*
+        删除指定id的权限
+     */
+    function deleteDelegation(delegationId){
+        $.post(
+            "/delegations/deleteDelegation",
+            "delegationId="+delegationId,
+            function (resp) {
+                if(resp.code == 0){
+                    location.reload();
+                }else{
+                    alert(resp.msg)
+                }
+            },
+            "json"
+        )
+    }
+
+
+    //动态的将集合中的每一个权限都添加到html中
+    function appendData(delegationList) {
+        //$.each(被遍历的对象，变量的函数)
+        $.each(delegationList, function (index, delegation) {
+            //声明需要被添加的数据内容
+            var data = "<tr>" +
+                "<td>"+delegation.delegationId+"</td>" +
+                "<td>"+delegation.delegationName+"</td>" +
+                "<td>"+delegation.delegationDes+"</td>" +
+                "<td>"+delegation.delegationDes+"</td>" +
+                "<td>" +
+                "<div>" +
+                "<a class=\"button border-main\" href=\"editorProject.html\" style=\"padding: 2px 8px;\"><span\n" +
+                "                                class=\"icon-edit\"></span> 修改</a>" +
+                "<a class=\"button border-red\" href=\"javascript:deleteDelegation("+delegation.delegationId+")\" style=\"padding: 2px 8px;\"\n" +
+                "                        ><span class=\"icon-trash-o\"></span> 删除</a>" +
+                "</div>" +
+                "</td>" +
+                "</tr>"
+            //将数据添加到table中
+            $("#delegationList").append(data);
+
+        })
+    }
+
+    $(function (){
+        //1.请求服务器获取所有的权限
+        $.get(
+            "/delegations/findAllDelegations",
+            function (resp){
+                //2.取出所有权限，并动态的添加到此html中
+                var delegationList = resp.t;//取出服务器响应的permList对象
+                appendData(delegationList);//动态的将集合中的每一个权限都添加到html中
+            },
+            "json"
+        );
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="html/js/jquery.js"></script>
+</head>
+<body>
+    <input id="btn" type="button" value="测试按钮"/>
+</body>
+    <script>
+/*
+    JSON.parse(json格式的字符串);   将字符串转换为js对象
+    JSON.stringify(js对象);        将js对象转换为字符串
+*/
+        $(function (){
+            $("#btn").click(function (){
+                var data = {"username":"jay", "password":"123"};
+                $.ajax({
+                    "url":"/users/json",
+                    "type":"post",
+                    "contentType":"application/json;charset=utf-8",
+                    "data":JSON.stringify(data),
+                    "dataType":"json",
+                    "success":function (resp){
+                        alert("haha")
+                    }
+                });
+            });
+        })
+
+    </script>
+</html>

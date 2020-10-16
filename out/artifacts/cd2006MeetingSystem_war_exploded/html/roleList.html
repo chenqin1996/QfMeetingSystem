@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="css/pintuer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/pintuer.js"></script>
+    <script src="js/commons1.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+</head>
+<body style="border-top: 2px">
+<form method="post" action="" id="listform">
+    <div class="panel admin-panel">
+        <div class="panel-head"><strong class="icon-reorder">项目列表</strong></div>
+        <div class="padding border-bottom">
+            <ul class="search" style="padding-left:10px;">
+                <li><a class="button border-main icon-plus-square-o" href="addRole.html"> 新增项目</a></li>
+                <if condition="$iscid eq 1">
+                </if>
+
+            </ul>
+        </div>
+        <table id="roleList" class="table table-hover text-center">
+            <tr>
+                <th width="20%">角色编号</th>
+                <th>角色名称</th>
+                <th>角色描述</th>
+                <th>操作</th>
+            </tr>
+
+            <!--            <tr>-->
+            <!--                <td>88</td>-->
+            <!--                <td>测试角色1</td>-->
+            <!--                <td>测试描述1</td>-->
+            <!--                <td>-->
+                                <!--<a href='javascript:void(0)'  class='delete'>删除</a>-->
+                                <!--&nbsp;&nbsp;-->
+                                <!--<a href='javascript:void(0)'  class='update'>更新</a>-->
+            <!--                </td>-->
+            <!--            </tr>-->
+
+        </table>
+    </div>
+</form>
+<script>
+
+    /*
+        删除指定id的权限
+     */
+    function deleteRole(roleId){
+        $.post(
+            "/roles/deleteRole",
+            "roleId="+roleId,
+            function (resp) {
+                if(resp.code == 0){
+                    location.reload();
+                }else{
+                    alert(resp.msg)
+                }
+            },
+            "json"
+        )
+    }
+
+    function appendData(roleList) {
+        //$.each(被遍历的对象，变量的函数)
+        $.each(roleList, function (index, role) {
+            var data = "<tr>"+
+                    "<td>"+role.roleId+"</td>"+
+                    "<td>"+role.roleName+"</td>"+
+                    "<td>"+role.roleDescription+"</td>"+
+                    "<td>"+
+                    "<div>" +
+                    "<a class=\"button border-main\" href=\"editorProject.html\" style=\"padding: 2px 8px;\"><span\n" +
+                    "                                class=\"icon-edit\"></span> 修改</a>" +
+                    "<a class=\"button border-red\" href=\"javascript:deleteRole("+role.roleId+")\" style=\"padding: 2px 8px;\"\n" +
+                    "                        ><span class=\"icon-trash-o\"></span> 删除</a>" +
+                    "</div>" +
+                    "</td>"+
+                    "</tr>"
+            //将数据添加到table中
+            $("#roleList").append(data);
+        })
+    }
+
+    $(function (){
+        //1.请求服务器获取所有的角色
+        $.get(
+            "/roles/findAllRole",
+            function (resp){
+                //2.取出所有角色，并动态的添加到此html中
+                var roleList = resp.t;//取出服务器响应的roleList对象
+                appendData(roleList);//动态的将集合中的每一个权限都添加到html中
+            },
+            "json"
+        );
+    })
+</script>
+
+</body>
+</html>

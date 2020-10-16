@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="css/pintuer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/pintuer.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+</head>
+<body>
+<form method="post" action="" id="listform">
+    <div class="panel admin-panel">
+        <div class="panel-head"><strong class="icon-reorder">权限列表</strong></div>
+        <div class="padding border-bottom">
+            <ul class="search" style="padding-left:10px;">
+                <li><a class="button border-main icon-plus-square-o" href="addPerm.html"> 新增权限</a></li>
+            </ul>
+        </div>
+        <table id="permList" class="table table-hover text-center">
+            <tr>
+                <th>权限ID</th>
+                <th>权限名称</th>
+                <th>权限描述</th>
+                <th>操作</th>
+            </tr>
+
+<!--            <tr>-->
+<!--                <td>A0001</td>-->
+<!--                <td>测试权限名称</td>-->
+<!--                <td>测试权限描述</td>-->
+<!--                <td>-->·
+<!--                    <div>-->
+<!--                        <a class="button border-main" href="editorProject.html" style="padding: 2px 8px;"><span-->
+<!--                                class="icon-edit"></span> 修改</a>-->
+<!--                        <a class="button border-red" href="javascript:void(0)" style="padding: 2px 8px;"-->
+<!--                        ><span class="icon-trash-o"></span> 删除</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--            </tr>-->
+        </table>
+    </div>
+</form>
+<script>
+    /*
+        删除指定id的权限
+     */
+    function deletePerm(perId){
+        $.post(
+            "/perms/deletePerm",
+            "perId="+perId,
+            function (resp) {
+                if(resp.code == 0){
+                    location.reload();
+                }else{
+                    alert(resp.msg)
+                }
+            },
+            "json"
+        )
+    }
+
+    //动态的将集合中的每一个权限都添加到html中
+    function appendData(permList) {
+        //$.each(被遍历的对象，变量的函数)
+        $.each(permList, function (index, perm) {
+            //声明需要被添加的数据内容
+            var data = "<tr>" +
+                "<td>"+perm.perId+"</td>" +
+                "<td>"+perm.perName+"</td>" +
+                "<td>"+perm.perDes+"</td>" +
+                "<td>" +
+                "<div>" +
+                "<a class=\"button border-main\" href=\"editorProject.html\" style=\"padding: 2px 8px;\"><span\n" +
+                "                                class=\"icon-edit\"></span> 修改</a>" +
+                "<a class=\"button border-red\" href=\"javascript:deletePerm("+perm.perId+")\" style=\"padding: 2px 8px;\"\n" +
+                "                        ><span class=\"icon-trash-o\"></span> 删除</a>" +
+                "</div>" +
+                "</td>" +
+                "</tr>"
+            //将数据添加到table中
+            $("#permList").append(data);
+
+        })
+    }
+
+    $(function (){
+        //1.请求服务器获取所有的权限
+        $.get(
+            "/perms/findAllPerms",
+            function (resp){
+                //2.取出所有权限，并动态的添加到此html中
+                var permList = resp.t;//取出服务器响应的permList对象
+                appendData(permList);//动态的将集合中的每一个权限都添加到html中
+            },
+            "json"
+        );
+    })
+</script>
+
+</body>
+</html>

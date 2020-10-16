@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="css/pintuer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+    <script src="js/pintuer.js"></script>
+    <script src="js/commons1.js"></script>
+
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong><span class="icon-key"></span> 修改会员密码</strong></div>
+    <div class="body-content">
+        <form method="post" class="form-x" action="">
+            <div class="form-group">
+                <div class="label">
+                    <label id="zh">管理员帐号：</label>
+                </div>
+                <div class="field">
+                    <label id="adminLoginName" style="line-height:33px;">
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>原始密码：</label>
+                </div>
+                <div class="field">
+                    <input type="password" class="input w50" id="mpass" name="mpass" size="50" placeholder="请输入原始密码"/>
+                    <span id="checkPW">校验信息</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>新密码：</label>
+                </div>
+                <div class="field">
+                    <input type="password" class="input w50" id="newpass" name="newpass" size="50"
+                           placeholder="请输入新密码"/>
+                    <span id="checkPWNew">校验信息</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>确认新密码：</label>
+                </div>
+                <div class="field">
+                    <input type="password" class="input w50" id="renewpass" name="renewpass" size="50"
+                           placeholder="请再次输入新密码"/>
+                    <span id="checkPWReNew">校验信息</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="label">
+                    <label></label>
+                </div>
+                <div class="field">
+                    <input id="submit" class="button bg-main icon-check-square-o" type="button" value="提交">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    /*
+    将cookie中的userInfo的userName信息取出并添加到adminLoginName标签中
+     */
+    function initPage() {
+        //取出name为userInfo的cookie对应的value值
+        var userInfo = $.cookie("userInfo");
+        //将value值从string转换为js对象
+        userInfo = JSON.parse(userInfo);
+       //取出userName属性值
+        var userName = userInfo.t.userName;
+        //将userName添加到id为adminLoginName的标签中
+        /*
+        元素.html(内容)
+        元素.text(内容)
+        共同点：都是想元素的开始标签与结束标签之间添加内容
+        不同点：.html会把内容作为html元素来处理
+               .text把任何内容都当做普通文体来处理
+         */
+        $("#adminLoginName").text(userName)
+
+    }
+
+    /*
+        使用指定的正则表达式来校验输入的原密码
+     */
+    function verifyHtmlPassword() {
+        var regex = /^[0-9a-zA-Z_]{6,9}$/
+        var mpass = $("#mpass").val();
+        if(regex.test(mpass)){
+            $("#checkPW").text("");
+            $("#mpass").css("border","1px solid green")
+            return true;
+        }else{
+            $("#checkPW").text("密码由数字、字母、_组成，长度必须是6~9位")
+            $("#checkPW").css("color","red");
+            $("#mpass").css("border","1px solid red")
+            return false;
+        }
+
+    }
+
+    /*
+        服务器校验密码是否正确
+     */
+    function verifyServerPassword() {
+
+        var data = {"userName":$("#adminLoginName").text(), "password":$("#mpass").val()}
+        $.ajax({
+            "url":"/users/verifyPwd",
+            "type":"post",
+            "data":JSON.stringify(data),
+            "dataType":"json",
+            "contentType":"application/json; charset=utf-8",
+            "success":function (resp){
+                if(resp.code!=0){
+                    $("#checkPW").text(resp.msg)
+                    $("#checkPW").css("color","red");
+                    $("#mpass").css("border","1px solid red")
+                    result2 = false;
+                }else{
+                    $("#checkPW").text("");
+                    $("#mpass").css("border","1px solid green")
+                    result2 = true;
+                }
+            }
+        })
+    }
+
+    /*
+    前端校验新密码
+     */
+    function verifyHtmlNewPassword() {
+        var regex = /^[0-9a-zA-Z_]{6,9}$/
+        var newpass = $("#newpass").val();
+        if(regex.test(newpass)){
+            $("#checkPWNew").text("");
+            $("#newpass").css("border","1px solid green")
+            return true;
+        }else{
+            $("#checkPWNew").text("密码由数字、字母、_组成，长度必须是6~9位")
+            $("#checkPWNew").css("color","red");
+            $("#newpass").css("border","1px solid red")
+            return false;
+        }
+    }
+
+    /*
+    前端校验确认新密码
+    */
+    function verifyHtmlReNewPassword() {
+        if( $("#newpass").val() != $("#renewpass").val()){
+            $("#checkPWReNew").text("密码不一致")
+            $("#checkPWReNew").css("color","red");
+            $("#renewpass").css("border","1px solid red")
+            return false;
+        }else{
+            $("#checkPWReNew").text("");
+            $("#renewpass").css("border","1px solid green")
+            return true;
+        }
+    }
+
+    var result2;
+    $(function () {
+        //初始化页面
+        initPage();
+        var result1;
+
+        var result3;
+        var result4;
+
+        //原密码输入框的焦点离开事件
+        $("#mpass").blur(function (){
+            //前端校验原密码是否符合要求
+            result1 = verifyHtmlPassword();
+            //取出用户名  与 原密码作为发送给服务器的数据
+
+            //如果原密码的前端验证通过，则使用服务器来校验原密码
+            if(result1){
+                // 服务器校验密码是否正确
+                verifyServerPassword();
+            }
+        })
+
+        //新密码输入框的焦点离开事件
+        $("#newpass").blur(function (){
+            //前端校验新密码
+            result3 = verifyHtmlNewPassword();
+        })
+
+        //确认新密码输入框的焦点离开事件
+        $("#renewpass").blur(function (){
+            //前端校验新密码
+            result4 = verifyHtmlReNewPassword();
+        })
+
+        $("#submit").click(function (){
+            if(result1 && result2 && result3 && result4){
+                var data = {"userName":$("#adminLoginName").text(), "password":$("#newpass").val()}
+                $.ajax({
+                    "url":"/users/updatePwd",
+                    "type":"post",
+                    "data":JSON.stringify(data),
+                    "dataType":"json",
+                    "success":function (resp) {
+                        if(resp.code == 0){
+                            top.location.href = "/html/login.html"
+                        }else{
+                            alert(resp.msg)
+                        }
+                    }
+                })
+            }else {
+                alert("瞎点啥提交！")
+            }
+        })
+
+
+    })
+</script>
+
+
+</body>
+</html>

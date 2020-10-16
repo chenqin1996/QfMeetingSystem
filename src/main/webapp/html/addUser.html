@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="css/pintuer.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/jquery.js"></script>
+    <script src="js/pintuer.js"></script>
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong><span class="icon-key"></span> 新增用户</strong></div>
+    <div class="body-content">
+        <form method="post" class="form-x" action="">
+
+            <div class="form-group">
+                <div class="label">
+                    <label>登陆账户</label>
+                </div>
+                <div class="field">
+                    <input type="text" class="input w50" id="adminLoginName" name="adminLoginName" size="50"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>登陆密码</label>
+                </div>
+                <div class="field">
+                    <input type="text" class="input w50" id="userPassword" name="userPassword" size="50"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>姓名</label>
+                </div>
+                <div class="field">
+                    <input type="text" class="input w50" id="adminName" name="adminName" size="100"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>性别</label>
+                </div>
+                <div class="field">
+                    <select id="adminSex" name="adminSex">
+                        <option value="0">男</option>
+                        <option value="1">女</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>电话</label>
+                </div>
+                <div class="field">
+                    <input type="text" class="input w50" id="adminTel" name="adminTel" size="100"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>职位</label>
+                </div>
+                <div class="field">
+                    <select id="duty" name="dutyName">
+
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label>代表团</label>
+                </div>
+                <div class="field">
+                    <select id="deputation" name="deputationName">
+
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label></label>
+                </div>
+                <div class="field">
+                    <input id="submit" class="button bg-main icon-check-square-o" type="button" value="提交">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+
+    $(function () {
+        $("#submit").click(function (resp) {
+            var adminLoginName = $("#adminLoginName").val();//userName用户名字
+            var userPassword = $("#userPassword").val();//password
+            var adminName = $("#adminName").val();//userRealName真实名字
+            var adminSex = $("#adminSex option").val();//gender
+            var adminTel = $("#adminTel").val();//telPhone
+            var duty = $("#duty").val();//staffId
+            var deputation = $("#deputation").val();//delegationId
+            var data = {"userName":adminLoginName,"password":userPassword,
+                        "userRealName":adminName,"gender":adminSex,
+                        "telPhone":adminTel,"staffId":duty,
+                        "delegationId":deputation}
+
+            $.ajax({
+                "url":"/addUsers/addUser",
+                "type":"post",
+                "data":JSON.stringify(data),
+                "dataType":"json",
+                "contentType":"application/json;charset=utf-8",
+                "success":function (resp) {
+                    if (resp.code == 0){
+                        location.href="/html/userList.html"
+                    }else{
+                        alert(resp.msg)
+                    }
+                }
+            })
+        });
+
+
+        //读取所有的职位，并动态的显示到本页面
+        $.get(
+            "/addUsers/findAllStaff",
+            function (resp){
+                //2.取出所有职位，并动态的添加到此html中
+                var staffList = resp.t;//取出服务器响应的staffList对象
+                appendData(staffList);//动态的将集合中的每一个职位都添加到html中
+            },
+            "json"
+        );
+    });
+
+    $("#duty").change(function () {
+        $("#deputation").empty();
+        var data = {"staffId":$("#duty").val()};
+        $.ajax({
+            "url":"/addUsers/findAllDeputation",
+            "type":"post",
+            "data":JSON.stringify(data),
+            "dataType":"json",
+            "contentType":"application/json;charset=utf-8",
+            "success":function (resp) {
+                   //var deputationList = JSON.parse(JSON.stringify(resp)).t;
+                var deputationList = resp.t;
+                appenDataDeputation(deputationList);
+            }
+        })
+    });
+
+    function appendData(staffList){
+        $.each(staffList, function (index, staff){
+            var data = "<option value='"+staff.staffId+"'>"+staff.staffName+"</option>";
+            $("#duty").append(data);
+        })
+    }
+
+    function appenDataDeputation(deputationList) {
+        $.each(deputationList, function (index, delegation) {
+            var data = "<option value='"+delegation.delegationId+"'>"+delegation.delegationName+"</option>";
+            $("#deputation").append(data);
+        })
+    }
+
+</script>
+
+
+
+</body>
+</html>
