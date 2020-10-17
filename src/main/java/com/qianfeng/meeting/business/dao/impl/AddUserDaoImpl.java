@@ -16,10 +16,7 @@ import javax.xml.ws.handler.Handler;
 import java.sql.Connection;
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/14
- **/
+
 public class AddUserDaoImpl implements AddUserDao{
     private QueryRunner qr = QfDbUtils.getQr();
 
@@ -81,7 +78,7 @@ public class AddUserDaoImpl implements AddUserDao{
                 "\tt_user\n" +
                 "\tINNER JOIN t_user_staff ON t_user.uid = t_user_staff.uId\n" +
                 "\tINNER JOIN t_staff ON t_user_staff.staffId = t_staff.staffId\n" +
-                "\tINNER JOIN t_delegation ON t_staff.delegationId = t_delegation.delegationId";
+                "\tINNER JOIN t_delegation ON t_staff.delegationId = t_delegation.delegationId order by uid";
 
         List<AddUserVo> userVoList = qr.query(sql, new BeanListHandler<AddUserVo>(AddUserVo.class));
         return userVoList;

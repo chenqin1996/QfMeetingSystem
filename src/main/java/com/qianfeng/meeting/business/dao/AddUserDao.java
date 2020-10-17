@@ -8,20 +8,13 @@ import com.qianfeng.meeting.business.vo.UserVo;
 
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/14
- **/
+
 public interface AddUserDao {
     void addUser(User user) throws Exception;
 
     User finUserByUserName(String userName) throws Exception;
 
-//    void staff2DeleRelaction(Integer uId, Integer delegationId) throws Exception;
-
     void addUser2StaffRelation(Integer uId, Integer staffId) throws Exception;
-
-//    List<UserVo> finAllUser() throws Exception;
 
     List<Staff> findAllStaff() throws Exception;
 

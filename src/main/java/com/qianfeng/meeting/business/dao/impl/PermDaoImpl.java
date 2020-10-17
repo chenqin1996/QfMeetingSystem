@@ -8,10 +8,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 public class PermDaoImpl implements PermDao {
     private QueryRunner qr = QfDbUtils.getQr();
     /**

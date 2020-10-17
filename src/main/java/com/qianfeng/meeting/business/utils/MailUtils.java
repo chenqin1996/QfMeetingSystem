@@ -9,8 +9,8 @@ import java.util.Properties;
  * 发邮件工具类
  */
 public final class MailUtils {
-    private static final String USER = "allen_email0416@163.com"; // 发件人称号，同邮箱地址
-    private static final String PASSWORD = "XJZDDLHZYACGJVWM"; // 如果是qq邮箱可以使户端授权码，或者登录密码
+    private static final String USER = "chenqin_1996@163.com"; // 发件人称号，同邮箱地址
+    private static final String PASSWORD = "SLJYAGXKGTYWTGET"; // 如果是qq邮箱可以使户端授权码，或者登录密码
 
     /**
      *

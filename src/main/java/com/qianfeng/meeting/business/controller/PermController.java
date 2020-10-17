@@ -12,10 +12,7 @@ import com.qianfeng.meeting.framework.annotation.QfRequestMapping;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 @QfController("/perms")
 public class PermController {
     private PermService permService = new PermServiceImpl();

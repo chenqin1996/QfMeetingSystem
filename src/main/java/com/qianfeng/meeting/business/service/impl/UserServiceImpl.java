@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
      * @param userRealName
      */
     public void sendEmail(String userRealName) {
-        String to = "1025226466@qq.com";
+        String to = "1755740426@qq.com";
         String text = "千锋：" + userRealName +"请你喝茶！";
         String title = "千锋会议系统呼叫运维";
 

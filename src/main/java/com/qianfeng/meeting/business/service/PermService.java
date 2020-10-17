@@ -4,10 +4,7 @@ import com.qianfeng.meeting.business.pojo.Permission;
 
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 public interface PermService {
     void addPerm(Permission permission) throws Exception;
 

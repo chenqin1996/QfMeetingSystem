@@ -13,10 +13,7 @@ import com.qianfeng.meeting.framework.annotation.QfRequestMapping;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 @QfController("/roles")
 public class RoleController {
     private RoleService roleService = new RoleServiceImpl();

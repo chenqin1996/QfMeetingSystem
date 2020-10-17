@@ -5,10 +5,7 @@ import com.qianfeng.meeting.business.vo.RoleVo;
 
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 public interface RoleService {
     void addRole(RoleVo roleVo) throws Exception;
 

@@ -7,10 +7,7 @@ import com.qianfeng.meeting.business.service.PermService;
 
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 public class PermServiceImpl implements PermService {
     private PermDao permDao = new PermDaoImpl();
 

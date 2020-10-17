@@ -12,10 +12,7 @@ import com.qianfeng.meeting.business.vo.UserVo;
 
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/14
- **/
+
 public class AddUserServiceImpl implements AddUserService{
 
     private AddUserDao addUserDao = new AddUserDaoImpl();
@@ -49,10 +46,6 @@ public class AddUserServiceImpl implements AddUserService{
         }
     }
 
-//    @Override
-//    public List<UserVo> findAllUser() throws Exception {
-//        return addUserDao.finAllUser();
-//    }
 
     @Override
     public List<Staff> findAllStaff() throws Exception {
@@ -90,14 +83,5 @@ public class AddUserServiceImpl implements AddUserService{
     //添加用户和职位的关联关系
     private void addUser2StaffRelation(Integer uId, Integer staffId ,AddUserVo addUserVo) throws Exception{
         addUserDao.addUser2StaffRelation(uId, staffId);
-
-//        //添加职位与代表团的关联关系
-//        Integer delegationId = addUserVo.getDelegationId();
-//        staff2DeleRelaction(staffId,delegationId);
     }
-
-//    //添加职位与代表团的关联关系
-//    private void staff2DeleRelaction(Integer uId, Integer delegationId) throws Exception{
-//        addUserDao.staff2DeleRelaction(uId, delegationId);
-//    }
 }

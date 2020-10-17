@@ -4,10 +4,7 @@ import com.qianfeng.meeting.business.pojo.Role;
 
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 public interface RoleDao {
     void addRole(Role role) throws Exception;
     Role findRoleByRoleName(String roleName) throws Exception;

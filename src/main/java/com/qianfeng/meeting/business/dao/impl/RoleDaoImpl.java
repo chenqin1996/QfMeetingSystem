@@ -10,10 +10,7 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import java.sql.Connection;
 import java.util.List;
 
-/**
- * @author Allen
- * @date 2020/10/13
- **/
+
 public class RoleDaoImpl implements RoleDao {
     private QueryRunner qr = QfDbUtils.getQr();
 
